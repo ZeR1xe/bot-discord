@@ -1,3 +1,4 @@
+--upgrade pip
 discord.py
 yt-dlp
 requests

@@ -12,7 +12,14 @@ import json
 import os
 from dotenv import load_dotenv
 
-load_dotenv()  # Charge les variables du fichier .env
+load_dotenv()  # Charge les variables d'environnement
+
+TOKEN = os.getenv("DISCORD_TOKEN")
+
+if TOKEN is None:
+    print("❌ ERREUR: Le token Discord est manquant !")
+else:
+    print("✅ Token récupéré avec succès !")
 
 # ✅ Configuration des intents
 intents = discord.Intents.default()
@@ -763,6 +770,13 @@ for guild in bot.guilds:
         print(f"{repr(channel.name)} - {channel.id}")
 
 # ------------------------- LANCEMENT DU BOT -------------------------
-TOKEN = os.getenv("DISCORD_TOKEN")
-bot.run(TOKEN)
 
+if TOKEN is None:
+    print("❌ Erreur : DISCORD_TOKEN est introuvable ! Assurez-vous qu'il est bien défini dans votre environnement.")
+    exit(1)  # Arrête le programme proprement
+else:
+    print("✅ Token récupéré avec succès.")
+
+bot = discord.Client(intents=discord.Intents.default())
+
+bot.run(TOKEN)

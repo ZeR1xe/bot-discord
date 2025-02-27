@@ -12,26 +12,17 @@ import json
 import os
 from dotenv import load_dotenv, find_dotenv
 
-load_dotenv()
+
+print("🔍 Debug : Variables d’environnement visibles depuis Python :")
+for key, value in os.environ.items():
+    print(f"{key}={value if 'TOKEN' not in key else '********'}")  # Masque le token pour la sécurité
+
 TOKEN = os.getenv("DISCORD_TOKEN")
 
-class MyBot(discord.Client):
-    async def on_ready(self):
-        print(f"✅ Connecté en tant que {self.user}")
-
-intents = discord.Intents.default()
-bot = MyBot(intents=intents)
-
 if TOKEN:
-    bot.run(TOKEN)
+    print(f"✅ Token récupéré (longueur : {len(TOKEN)})")
 else:
-    print("❌ Token Discord introuvable !")
-
-if not TOKEN:
-    print("❌ ERREUR: Le token Discord est manquant ou vide !")
-    print("💡 Vérifie que DISCORD_TOKEN est bien défini dans Railway.")
-else:
-    print("✅ Token récupéré avec succès !")
+    print("❌ Token introuvable ! Vérifie les variables d’environnement.")
 
 # ✅ Configuration des intents
 intents = discord.Intents.default()

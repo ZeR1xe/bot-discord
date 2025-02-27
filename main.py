@@ -10,7 +10,7 @@ import aiohttp
 import websockets
 import json
 import os
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
 # Charge le fichier .env et affiche son chemin (utile pour debug)
 dotenv_path = find_dotenv()

@@ -12,23 +12,20 @@ import json
 import os
 from dotenv import load_dotenv, find_dotenv
 
-dotenv_path = find_dotenv()
-if dotenv_path:
-    print(f"📂 Fichier .env trouvé : {dotenv_path}")
-    load_dotenv()
-else:
-    print("⚠️ Aucun fichier .env trouvé")
-
-# Vérifie si les variables sont bien chargées
-print("🔍 Variables d’environnement chargées :")
-for key, value in os.environ.items():
-    if "TOKEN" in key:  # Cache le token pour la sécurité
-        print(f"{key}=********")
-    else:
-        print(f"{key}={value}")
-
-# Récupère le token
+load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
+
+class MyBot(discord.Client):
+    async def on_ready(self):
+        print(f"✅ Connecté en tant que {self.user}")
+
+intents = discord.Intents.default()
+bot = MyBot(intents=intents)
+
+if TOKEN:
+    bot.run(TOKEN)
+else:
+    print("❌ Token Discord introuvable !")
 
 if not TOKEN:
     print("❌ ERREUR: Le token Discord est manquant ou vide !")

@@ -10,12 +10,21 @@ import aiohttp
 import websockets
 import json
 import os
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
+import logging
+import traceback
 
+# Active les logs en mode DEBUG
+logging.basicConfig(level=logging.DEBUG)
+
+# Vérifie si le bot détecte bien les événements
+print("🚀 Lancement du bot en mode DEBUG...")
+
+load_dotenv()  # Charge les variables depuis un fichier .env (si local)
 
 print("🔍 Debug : Variables d’environnement visibles depuis Python :")
 for key, value in os.environ.items():
-    print(f"{key}={value if 'TOKEN' not in key else '********'}")  # Masque le token pour la sécurité
+    print(f"{key}={value if 'TOKEN' not in key else '********'}")  # Masque le token
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 
@@ -23,7 +32,7 @@ if TOKEN:
     print(f"✅ Token récupéré (longueur : {len(TOKEN)})")
 else:
     print("❌ Token introuvable ! Vérifie les variables d’environnement.")
-
+    
 # ✅ Configuration des intents
 intents = discord.Intents.default()
 intents.message_content = True
@@ -143,6 +152,13 @@ async def roles(ctx):
     await ctx.send("✅ Message de sélection des rôles envoyé avec succès !")
 
 # ------------------------- ÉVÉNEMENT : BOT PRÊT -------------------------
+
+@bot.event
+async def on_command_error(ctx, error):
+    erreur = "".join(traceback.format_exception(type(error), error, error.__traceback__))
+    print(f"❌ Erreur détectée : {erreur}")  # Affiche l'erreur complète
+    await ctx.send(f"⚠️ Erreur : {error}")  # Envoie l'erreur sur Discord (optionnel)
+
 @bot.event
 async def on_ready():
     print(f"✅ {bot.user} est connecté !")
@@ -355,6 +371,11 @@ async def bannir(ctx, user: discord.Member, *, reason="Aucune raison spécifiée
         await ctx.send("❌ Je n'ai pas la permission de bannir cet utilisateur.")
     except Exception as e:
         await ctx.send(f"❌ Erreur inattendue : {e}")
+
+@bot.event
+async def on_message(message):
+    print(f"📩 Message reçu : {message.content} de {message.author}")
+    await bot.process_commands(message)  # Permet aux commandes de fonctionner
 
 @bot.command()
 async def debannir(ctx, user_id: int):
@@ -751,6 +772,9 @@ async def cmds(ctx):
 
     await ctx.send(embed=embed)
 
+    print(f"📜 Commandes chargées : {bot.commands}")
+
+
 # ------------------------- ÉVÉNEMENT : BOT PRÊT -------------------------
 @bot.event
 async def on_ready():
@@ -781,5 +805,7 @@ else:
     print("✅ Token récupéré avec succès.")
 
 bot = discord.Client(intents=discord.Intents.default())
+discord.utils.setup_logging()  # Active les logs détaillés de Discord.py
+bot.run(TOKEN, log_handler=None)  # Désactive le log par défaut pour afficher plus de détails
 
 bot.run(TOKEN)

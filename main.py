@@ -12,7 +12,6 @@ import json
 import os
 from dotenv import load_dotenv, find_dotenv
 
-# Charge le fichier .env et affiche son chemin (utile pour debug)
 dotenv_path = find_dotenv()
 if dotenv_path:
     print(f"📂 Fichier .env trouvé : {dotenv_path}")
@@ -20,15 +19,18 @@ if dotenv_path:
 else:
     print("⚠️ Aucun fichier .env trouvé")
 
-# Affiche toutes les variables d'environnement (DEBUG)
+# Vérifie si les variables sont bien chargées
 print("🔍 Variables d’environnement chargées :")
 for key, value in os.environ.items():
-    print(f"{key}={value}")
+    if "TOKEN" in key:  # Cache le token pour la sécurité
+        print(f"{key}=********")
+    else:
+        print(f"{key}={value}")
 
 # Récupère le token
 TOKEN = os.getenv("DISCORD_TOKEN")
 
-if TOKEN is None or TOKEN == "":
+if not TOKEN:
     print("❌ ERREUR: Le token Discord est manquant ou vide !")
     print("💡 Vérifie que DISCORD_TOKEN est bien défini dans Railway.")
 else:

@@ -4,3 +4,4 @@ requests
 aiohttp
 websockets
 python-dotenv
+pynacl
